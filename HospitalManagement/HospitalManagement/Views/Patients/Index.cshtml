@@ -1,0 +1,112 @@
+﻿@model IEnumerable<HospitalManagement.Models.Patient>
+
+@{
+    ViewData["Title"] = "Index";
+    var id = Context.Request.Cookies["id"];
+    var adm = Context.Request.Cookies["adm"];
+}
+
+@{
+    bool isAdmin = adm != null || !String.IsNullOrEmpty(adm);
+    if (isAdmin)
+    {
+        <p>
+            <a asp-action="Create">Add patient</a>
+        </p>
+    }
+}
+@using (Html.BeginForm())
+{
+    if (id != null || !String.IsNullOrEmpty(id))
+    {
+        <p>
+            Search here: @Html.TextBox("SearchString")
+            <input type="submit" value="Search" />
+        </p>
+    }
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @{
+                    bool isValidToken = id != null || !String.IsNullOrEmpty(id);
+                    if (isValidToken)
+                    {
+                        @Html.ActionLink(@Html.DisplayNameFor(model => model.FullName), "Index", new { sortOrder = ViewBag.PatientNameSortParm })
+                    }
+                    else
+                    {
+                        @Html.DisplayNameFor(model => model.FullName)
+                    }
+                }
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Age)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PersonalId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EntryDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Insurance)
+            </th>
+            <th>
+                @{
+                    if (isValidToken)
+                    {
+                        @Html.ActionLink(@Html.DisplayNameFor(model => model.Department), "Index", new { sortOrder = ViewBag.DepartmentSortParm })
+                    }
+                    else
+                    {
+                        @Html.DisplayNameFor(model => model.Department)
+                    }
+                }
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Doctor)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Age)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PersonalId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EntryDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Insurance)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Department.DepartmentName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Doctor.FullName)
+                </td>
+                @{
+                    if (isAdmin)
+                    {
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+</table>
